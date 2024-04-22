@@ -1,0 +1,42 @@
+﻿@model User
+@{
+    Layout = null;
+}
+
+<form id="register" method="post" asp-action="Register" asp-controller="User">
+    <div class="flex-container">
+        <div id="title"><b>Register</b></div>
+        <div class="flex-box">
+            <label asp-for="Login">Login:</label><br>
+            <input asp-for="Login" type="text" id="player-login" name="login">
+            <br>
+            <span asp-validation-for="Login" class="text-danger"></span>
+        </div>
+        <div class="flex-box">
+            <label asp-for="Password">Password:</label><br>
+            <input asp-for="Password" type="password" id="player-password-login" name="password">
+            <br>
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <div class="start-button-div">
+            <button class="btn btn-primary" id="start-login" style="width: 188px;" type="submit">Register</button>
+        </div>
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="flex-box">
+                <span class="text-danger">
+                    @foreach (var modelState in ViewData.ModelState.Values)
+                    {
+                        if (modelState.Errors.Any(e => e.ErrorMessage == "Неправильный логин или пароль. Попробуйте еще раз."))
+                        {
+                            foreach (var error in modelState.Errors)
+                            {
+                                <span>@error.ErrorMessage</span>
+                            }
+                        }
+                    }
+                </span>
+            </div>
+        }
+    </div>
+</form>
