@@ -1,6 +1,6 @@
 ﻿namespace cloudfilestorage.Models;
 
-public class User
+public class UserViewModel
 {
     public string Login { get; set; }
     public string Password { get; set; }
