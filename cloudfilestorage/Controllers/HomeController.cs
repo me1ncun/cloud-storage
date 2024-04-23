@@ -22,6 +22,16 @@ public class HomeController : Controller
     {
         return View();
     }
+    
+    public IActionResult Search()
+    {
+        return View();
+    }
+
+    public IActionResult CreateFolder()
+    {
+        return View();
+    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
