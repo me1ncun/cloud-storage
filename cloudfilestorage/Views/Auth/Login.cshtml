@@ -3,7 +3,7 @@
     Layout = null;
 }
 
-<form id="login" method="post" asp-action="Login" asp-controller="User">
+<form id="login" method="post" asp-action="Login" asp-controller="Auth">
     <div class="flex-container">
         <div id="title"><b>Login</b></div>
         <div class="flex-box">
@@ -22,7 +22,7 @@
             <button class="btn btn-primary" id="start-login" style="width: 188px;" type="submit">Login</button>
         </div>
         <div>
-            Don't have an account? <a asp-action="Register" asp-controller="User"><u>Register</u></a>
+            Don't have an account? <a asp-action="Register" asp-controller="Auth"><u>Register</u></a>
         </div>
         @if (!ViewData.ModelState.IsValid)
         {

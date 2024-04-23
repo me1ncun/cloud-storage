@@ -2,7 +2,7 @@
 
 namespace cloudfilestorage.Controllers;
 
-public class UserController : Controller
+public class AuthController : Controller
 {
     // GET
     public IActionResult Index()
