@@ -1,3 +1,14 @@
-﻿@{
+﻿@model string
+@{
     ViewData["Title"] = "Home Page";
+    var loggedInUser = Context.Request.HttpContext.Session.GetString("LoggedInUser");
+}
+@if (!string.IsNullOrEmpty(loggedInUser))
+{
+    <a asp-controller="Home" asp-action="Index"><u>Home</u></a>
+    <form id="search-form"  method="post" asp-action="Search" asp-controller="Home">
+        <input type="text"  id="player-login" placeholder="Search" name="search">
+    </form>
+    <a asp-controller="Home" asp-action="CreateFolder">New folder</a>
+    <a asp-controller="Home" asp-action="Upload">Upload</a>
 }
