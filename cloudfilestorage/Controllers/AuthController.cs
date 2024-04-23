@@ -1,22 +1,79 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Diagnostics;
+using cloudfilestorage.Models;
+using cloudfilestorage.Services.Interface;
+using Microsoft.AspNetCore.Mvc;
 
 namespace cloudfilestorage.Controllers;
 
 public class AuthController : Controller
 {
-    // GET
-    public IActionResult Index()
+    private readonly IAuthService _authService;
+    
+    public AuthController(IAuthService authService)
     {
-        return View();
+        _authService = authService;
     }
     
-    public IActionResult Login()
+    [HttpGet]
+    public IActionResult Login() => View();
+
+    [HttpGet]
+    public IActionResult Register() => View();
+    
+    [HttpPost]
+    public IActionResult Login(UserViewModel model)
     {
+        if (ModelState.IsValid)
+        {
+            string? userLogin = _authService.Authenticate(model.Login, model.Password);
+            if (userLogin != null)
+            {
+                HttpContext.Session.SetString("LoggedInUser", model.Login);
+                    
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ModelState.AddModelError("notCorrect", "Неправильный логин или пароль. Попробуйте еще раз.");
+            }
+        }
         return View();
     }
-    
-    public IActionResult Register()
+
+    [HttpPost]
+    public IActionResult Register(UserViewModel model)
     {
+        if (ModelState.IsValid)
+        {
+            _authService.Register(model.Login, model.Password);
+            var user = _authService.GetUser(model.Login, model.Password);
+            if (user != null)
+            {
+                return View(user);
+            }
+        }
         return View();
+    }
+
+    [HttpGet]
+    public IActionResult Logout()
+    {
+        try
+        {
+            HttpContext.Session.Clear();
+            HttpContext.Response.Clear();
+                
+            return RedirectToAction("Index", "Home");
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
