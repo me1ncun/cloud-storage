@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var loggedInUser = Context.Request.HttpContext.Session.GetString("LoggedInUser");
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -11,34 +14,42 @@
 <body>
 <header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-        <div class="container-fluid">
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-center">
-                    <ul class="navbar-nav flex-grow-1">
+        <div class="container-fluid" style="padding-left: 20vw; padding-right: 20vw;">
+            <div class="navbar-collapse collapse d-sm-inline-flex">
+                <ul class="navbar-nav flex-grow-1 d-flex align-items-center">
+                    <li class="nav-item">
+                        <img class="img-logo" src="~/images/cloud.png"/>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark fs-3" asp-area="" asp-controller="Home" asp-action="Index">Cloud Storage</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav d-flex align-items-center">
+                    @if (string.IsNullOrEmpty(loggedInUser))
+                    {
                         <li class="nav-item">
-                            <a asp-action="Index" asp-controller="Home"><img class="img-logo" src="images/cloud.png"/></a>
+                            <a class="nav-link text-dark fs-4" asp-area="" asp-controller="Auth" asp-action="Login">Login</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark fs-5" id="users-email" style="color: black;">@loggedInUser</a>
                         </li>
                         <li class="nav-item">
-                            <div class="nav-link text-dark">Cloud Storage</div>
+                            <a class="nav-link" asp-area="" asp-controller="Auth" asp-action="Logout" type="submit"><img id="logout-icon" src="~/images/logout_icon.png"/></a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Auth" asp-action="Login">Login</a>
-                        </li>
-                    </ul>
+                    }
+                </ul>
             </div>
         </div>
     </nav>
 </header>
-<div class="container">
+<div class="" style="padding-right: 20vw; padding-left: 20vw;">
     <main role="main" class="pb-3">
         @RenderBody()
     </main>
 </div>
-
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
