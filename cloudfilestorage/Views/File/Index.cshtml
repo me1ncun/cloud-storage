@@ -1,0 +1,42 @@
+﻿@model Amazon.S3.Model.ListObjectsV2Response
+@{
+    ViewData["Title"] = "Home Page";
+    var loggedInUser = Context.Request.HttpContext.Session.GetString("LoggedInUser");
+}
+@if (!string.IsNullOrEmpty(loggedInUser))
+{
+    <div class="d-flex justify-content-between flex-row align-self-center">
+        <a asp-controller="Home" class="text-black text-decoration-none" asp-action="Index">
+            <u>Home</u>
+        </a>
+        <form id="search-form" method="post" asp-action="SearchObject" asp-controller="File">
+            <input type="text" id="player-login" placeholder="🔍︎ Search" name="searchedObj" style="width: 100px;">
+            
+        </form>
+    </div>
+    
+    <div id="file-manager" style="margin-top: 15px;">
+        <div class="d-flex flex-row align-self-center bg-white border box-shadow" style="padding: 8px; border-radius: 8px;">
+            <div class="flex-box border box-shadow"  style="padding: 8px; border-radius: 8px;">
+                <img style="width: 20px; height: 20px;" src="~/images/folder.png">
+                <form asp-action="CreateBucket" asp-controller="File" method="post">
+                    <button class="text-black text-decoration-none" style="margin-top: 5px; border: 1.5px solid black; border-radius: 4px;" id="newFolderBtn" type="button">New folder</button>
+                    <input style="display: none;" asp-for="Name" id="folderName" type="text" placeholder="Enter folder name" name="bucketName">
+                    <button style="display: none; " class="text-black text-decoration-none" id="createFolder" type="submit">Create</button>
+                </form>
+            </div>
+            <div style="margin-left: 10px; padding: 8px; border-radius: 8px;" class="flex-box border box-shadow">
+                <img style="width: 20px; height: 20px;" src="~/images/upload.png">
+                <form asp-action="UploadFiles" asp-controller="File" method="post" enctype="multipart/form-data">
+                    <button class="text-black text-decoration-none" style="margin-top: 5px; border: 1.5px solid black; border-radius: 4px;" id="newFileBtn" type="button">Upload files</button>
+                    <div class="drop-zone" style="display: none;">
+                        <span class="drop-zone__prompt">Drop file here or click to upload</span>
+                        <input type="file" name="file" class="drop-zone__input">
+                    </div>
+                    <button style="display: none; margin-top: 8px;" class="text-black text-decoration-none" id="createFile" type="submit">Upload</button>
+                </form>
+            </div>
+        </div>
+        @await Html.PartialAsync("GetAllFiles")
+    </div>
+}
