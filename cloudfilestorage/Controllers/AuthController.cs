@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using cloudfilestorage.Models;
+using cloudfilestorage.Services.Implementation;
 using cloudfilestorage.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,28 +9,30 @@ namespace cloudfilestorage.Controllers;
 public class AuthController : Controller
 {
     private readonly IAuthService _authService;
-    
+
     public AuthController(IAuthService authService)
     {
         _authService = authService;
     }
-    
+
     [HttpGet]
     public IActionResult Login() => View();
 
     [HttpGet]
     public IActionResult Register() => View();
-    
+
     [HttpPost]
     public IActionResult Login(UserViewModel model)
     {
         if (ModelState.IsValid)
         {
             string? userLogin = _authService.Authenticate(model.Login, model.Password);
-            if (userLogin != null)
+            var user = _authService.GetUser(model.Login, model.Password);
+            if (user != null)
             {
-                HttpContext.Session.SetString("LoggedInUser", model.Login);
-                    
+                HttpContext.Session.SetString("LoggedInUser", user.Login); 
+                HttpContext.Session.SetString("LoggedInUserID", Convert.ToString(user.ID));
+                
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -37,6 +40,7 @@ public class AuthController : Controller
                 ModelState.AddModelError("notCorrect", "Неправильный логин или пароль. Попробуйте еще раз.");
             }
         }
+
         return View();
     }
 
@@ -52,6 +56,7 @@ public class AuthController : Controller
                 return View(user);
             }
         }
+
         return View();
     }
 
@@ -62,7 +67,7 @@ public class AuthController : Controller
         {
             HttpContext.Session.Clear();
             HttpContext.Response.Clear();
-                
+
             return RedirectToAction("Index", "Home");
         }
         catch (Exception ex)
