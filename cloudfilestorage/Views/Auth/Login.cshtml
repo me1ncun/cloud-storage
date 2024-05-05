@@ -4,9 +4,12 @@
 }
 @if (Model == null)
 {
-    <form id="login-form" method="post" asp-action="Login" asp-controller="Auth" >
-        <div class="flex-container">
-            <div id="title" class="d-flex fs-2"><b>Login</b></div>
+    <div class="container">
+    <form id="login-form"method="post" asp-action="Login" asp-controller="Auth">
+        <div class="border box-shadow d-flex justify-content-center align-items-center flex-column" style="width: fit-content; padding: 15px; border-radius: 8px;">
+            <div id="title" class="d-flex fs-2">
+                <b>Login</b>
+            </div>
             <div class="flex-box">
                 <label asp-for="Login">Username:</label><br>
                 <input asp-for="Login" type="text" id="player-login" placeholder="Enter username" name="login">
@@ -23,7 +26,10 @@
                 <button class="btn btn-primary" id="start-login" style="width: 100px;" type="submit">Login</button>
             </div>
             <div class="register-div">
-                Don't have an account? <a asp-action="Register" asp-controller="Auth"><u>Register</u></a>
+                Don't have an account?
+                <a asp-action="Register" asp-controller="Auth">
+                    <u>Register</u>
+                </a>
             </div>
             @if (!ViewData.ModelState.IsValid)
             {
@@ -43,5 +49,6 @@
                 </div>
             }
         </div>
-</form>
+    </form>
+    </div>
 }
