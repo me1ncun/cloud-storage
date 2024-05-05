@@ -1,9 +1,10 @@
+using Amazon.S3;
 using cloudfilestorage.Database;
+using cloudfilestorage.Models;
 using cloudfilestorage.Repositories;
 using cloudfilestorage.Repositories.Interface;
 using cloudfilestorage.Services.Implementation;
 using cloudfilestorage.Services.Interface;
-using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,11 +13,16 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IAuthService, AuthService>();
 builder.Services.AddSingleton<IAuthRepository, AuthRepository>();
 builder.Services.AddTransient<AppDbContext>();
+builder.Services.AddScoped<IStorageService, StorageService>();
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+builder.Services.AddAWSService<IAmazonS3>();
+builder.Services.Configure<AWSCredentials>(
+    builder.Configuration.GetSection(AWSCredentials.Position));
 
 // Add Redis cache
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-   options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
 });
 
 builder.Services.AddSession(options =>
@@ -45,6 +51,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=File}/{action=Index}/{id?}");
 
 app.Run();
