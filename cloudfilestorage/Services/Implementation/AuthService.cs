@@ -1,4 +1,5 @@
-﻿using cloudfilestorage.Models;
+﻿using Amazon.Util.Internal;
+using cloudfilestorage.Models;
 using cloudfilestorage.Repositories.Interface;
 using cloudfilestorage.Services.Interface;
 
@@ -7,15 +8,18 @@ namespace cloudfilestorage.Services.Implementation;
 public class AuthService : IAuthService
 {
     private readonly IAuthRepository _authRepository;
-
-    public AuthService(IAuthRepository authRepository)
+    private readonly IFileStorageService _fileStorageService;
+    public AuthService(IAuthRepository authRepository, IFileStorageService fileStorageService)
     {
         _authRepository = authRepository;
+        _fileStorageService = fileStorageService;
     }
 
     public void Register(string login, string password)
     {
         _authRepository.Register(login, password);
+        _fileStorageService.CreateUsersBucket(GetUser(login, password).ID);
+        
     }
 
     public string Login(string login, string password)
