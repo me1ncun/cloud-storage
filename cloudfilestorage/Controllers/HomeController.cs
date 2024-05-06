@@ -1,41 +1,35 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+﻿using Amazon.S3.Model;
 using cloudfilestorage.Models;
+using cloudfilestorage.Services.Interface;
+using Microsoft.AspNetCore.Mvc;
 
 namespace cloudfilestorage.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    private readonly IFileStorageService _fileStorageService;
+    
+    public HomeController(IFileStorageService fileStorageService)
     {
-        _logger = logger;
-    }
-
-    public IActionResult Index()
-    {
-        return View();
-    }
-
-    public IActionResult Privacy()
-    {
-        return View();
+        _fileStorageService = fileStorageService;
     }
     
-    public IActionResult Search()
+    [HttpGet]
+    public async Task<IActionResult> Index(string folderName)
     {
-        return View();
+        var foundFiles = await _fileStorageService.GetAllFiles(GetUsersStorage(), folderName);
+        
+        var viewModel = new IndexViewModel
+        {
+            AllFiles = foundFiles,
+            FoundObject = null 
+        };
+        
+        return View(viewModel);
     }
-
-    public IActionResult CreateFolder()
+    
+    public string GetUsersStorage()
     {
-        return View();
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        return $"user-{HttpContext.Session.GetString("LoggedInUserID")}-files";
     }
 }
