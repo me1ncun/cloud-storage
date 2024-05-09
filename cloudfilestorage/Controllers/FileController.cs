@@ -1,4 +1,5 @@
-﻿using Amazon.S3;
+﻿using System.Text.Json;
+using Amazon.S3;
 using Amazon.S3.Model;
 using cloudfilestorage.Models;
 using cloudfilestorage.Services.Interface;
@@ -16,63 +17,11 @@ public class FileController : Controller
     
     [HttpGet]
     public IActionResult Error() => View();
-    
-    [HttpPost]
-    public async Task<IActionResult> UploadFiles(IFormFile file)
-    {
-        var upload = _fileStorageService.UploadFiles(file);
-
-        if (upload.Result == false)
-        {
-            return RedirectToAction("Error", "File");
-        }
-        else
-        {
-            return RedirectToAction("Index", "Home");
-        }
-    }
-
 
     [HttpPost]
-    public async Task<IActionResult> CreateBucket(string bucketName)
+    public async Task<IActionResult> RenameObject(string oldName, string newName, string path)
     {
-        var createdBucket = _fileStorageService.CreateBucket(bucketName);
-        
-        if (createdBucket.Result == false)
-        {
-            return RedirectToAction("Error", "File");
-        }
-        else
-        {
-            return RedirectToAction("Index", "Home");
-        }
-    }
-    
-    [HttpPost]
-    public IActionResult TransportFolderName(string folderName)
-    {
-        return RedirectToAction("Index", "Home", new { folderName = folderName });
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> DeleteObject(string fileName)
-    {
-        var deletedObject = _fileStorageService.DeleteObject(fileName);
-        
-        if (deletedObject.Result == false)
-        {
-            return RedirectToAction("Error", "File");
-        }
-        else
-        {
-            return RedirectToAction("Index", "Home");
-        }
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> RenameObject(string oldName, string newName)
-    {
-        var renamedObject = _fileStorageService.RenameObject(oldName, newName);
+        var renamedObject = _fileStorageService.RenameObject(oldName, newName, path, GetUsersStorage());
         
         if (renamedObject.Result == false)
         {
@@ -85,9 +34,9 @@ public class FileController : Controller
     }
     
     [HttpPost]
-    public async Task<IActionResult> RenameBucket(string oldName, string newName)
+    public async Task<IActionResult> RenameBucket(string oldName, string newName, string path)
     {
-        var renamedBucket = _fileStorageService.RenameBucket(oldName, newName);
+        var renamedBucket = _fileStorageService.RenameBucket(oldName, newName, path, GetUsersStorage());
         
         if (renamedBucket.Result == false)
         {
@@ -99,6 +48,52 @@ public class FileController : Controller
         }
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Search(string searchedObj)
+    {
+        if (!string.IsNullOrEmpty(searchedObj))
+        {
+            var allFiles = await _fileStorageService.GetAllFiles(GetUsersStorage(), null);
+            var foundObjects = allFiles.S3Objects.Where(x => x.Key.Contains(searchedObj)).ToList();
+            var serializedObjects = JsonSerializer.Serialize(foundObjects);
+            return RedirectToAction("Index", "Home", new {foundObjects = serializedObjects });
+        }
+        else
+        {
+            return RedirectToAction("Index", "Home");
+        }
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> UploadFiles(IFormFile file, string path)
+    {
+        var upload = _fileStorageService.UploadFiles(file, path, GetUsersStorage());
+
+        if (upload.Result == false)
+        {
+            return RedirectToAction("Error", "File");
+        }
+        else
+        {
+            return RedirectToAction("Index", "Home");
+        }
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> CreateBucket(string bucketName, string path)
+    {
+        var createdBucket = _fileStorageService.CreateBucket(bucketName, path, GetUsersStorage());
+        
+        if (createdBucket.Result == false)
+        {
+            return RedirectToAction("Error", "File");
+        }
+        else
+        {
+            return RedirectToAction("Index", "Home");
+        }
+    }
+    
     [HttpPost]
     public async Task<IActionResult> DownloadObject(string fileName)
     {
@@ -113,32 +108,32 @@ public class FileController : Controller
             return RedirectToAction("Index", "Home");
         }
     }
-
-    /*[HttpPost]
-    public async Task<IActionResult> SearchedObject(string searchedObj)
+    
+    [HttpPost]
+    public async Task<IActionResult> DeleteObject(string fileName)
     {
-        var allFiles = _fileStorageService.GetAllFiles()
-        var foundObject = allFiles.S3Objects.FirstOrDefault(x => x.Key.Contains(searchedObj));
-
-        if (foundObject != null)
-        {
-            var viewModel = new IndexViewModel
-            {
-                AllFiles = allFiles,
-                FoundObject = foundObject
-            };
-
-            return RedirectToAction("Index", "File", viewModel);
-        }
-        else
+        var deletedObject = _fileStorageService.DeleteObject(fileName);
+        
+        if (deletedObject.Result == false)
         {
             return RedirectToAction("Error", "File");
         }
-    }*/
-
-    public async Task<IActionResult> OpenFolder(string folderName)
+        else
+        {
+            return RedirectToAction("Index", "Home");
+        }
+    }
+    
+    [HttpPost]
+    public IActionResult TransportFolderName(string folderName)
     {
-        return View();
+        return RedirectToAction("Index", "Home", new { folderName = folderName });
+    }
+    
+    [HttpPost]
+    public IActionResult FilePage(S3Object fileName)
+    {
+        return RedirectToAction("FilePage", "Home", new { fileName = fileName });
     }
     
     public string GetUsersStorage()
