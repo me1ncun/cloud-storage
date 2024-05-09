@@ -15,13 +15,13 @@
 ## Интерфейс приложения
 
 ### Login page
-![photo_1.jpg](Screenshots/Picture1.jpg)
+![photo_1.jpg](Screenshots/login_page.jpg)
 ### Home page
-![photo_2.jpg](Screenshots/Picture2.jpg)
-### Upload
+![photo_2.jpg](Screenshots/home_page.jpg)
+### File page
 ![photo_3.jpg](Screenshots/Picture3.jpg)
 ### Search page
-![photo_3.jpg](Screenshots/Picture3.jpg)
+![photo_3.jpg](Screenshots/search_page.jpg)
 
 ## Инструменты
 
