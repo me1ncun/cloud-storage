@@ -2,8 +2,6 @@
 using Amazon.S3.Model;
 using cloudfilestorage.Services.Interface;
 using cloudfilestorage.Utils;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace cloudfilestorage.Services.Implementation;
 
@@ -17,26 +15,29 @@ public class FileStorageService : IFileStorageService
         _s3Client = s3Client;
     }
 
-    public async Task<bool> UploadFiles(IFormFile file)
+    public async Task<bool> UploadFiles(IFormFile file, string path, string usersFolder)
     {
         try
         {
-            var bucketExists = await _s3Client.DoesS3BucketExistAsync("user-files-aws");
-            if (!bucketExists)
+            PutObjectRequest objectRequest;
+
+            if (path != null)
             {
-                var bucketRequest = new PutBucketRequest
+                objectRequest = new PutObjectRequest()
                 {
                     BucketName = _standartBucketName,
-                    UseClientRegion = true
+                    Key = $"{path}/{file.FileName}"
                 };
-                await _s3Client.PutBucketAsync(bucketRequest);
+            }
+            else
+            {
+                objectRequest = new PutObjectRequest()
+                {
+                    BucketName = _standartBucketName,
+                    Key = $"{usersFolder}/{file.FileName}"
+                };
             }
 
-            var objectRequest = new PutObjectRequest()
-            {
-                BucketName = _standartBucketName,
-                Key = $"{file.FileName}"
-            };
             var response = await _s3Client.PutObjectAsync(objectRequest);
 
             return true;
@@ -47,17 +48,31 @@ public class FileStorageService : IFileStorageService
             return false;
         }
     }
-    
-    public async Task<bool> CreateBucket(string bucketName)
+
+    public async Task<bool> CreateBucket(string bucketName, string path, string usersFolder)
     {
         try
         {
-            var request = new PutObjectRequest
+            PutObjectRequest request;
+            if (path != null)
             {
-                BucketName = _standartBucketName,
-                Key = $"{bucketName}/",
-                ContentBody = ""
-            };
+                request = new PutObjectRequest
+                {
+                    BucketName = _standartBucketName,
+                    Key = $"{path}/{bucketName}/",
+                    ContentBody = ""
+                };
+            }
+            else
+            {
+                request = new PutObjectRequest
+                {
+                    BucketName = _standartBucketName,
+                    Key = $"{usersFolder}/{bucketName}/",
+                    ContentBody = ""
+                };
+            }
+
             await _s3Client.PutObjectAsync(request);
 
             return true;
@@ -68,32 +83,40 @@ public class FileStorageService : IFileStorageService
             return false;
         }
     }
-    
+
     public async Task<ListObjectsV2Response> GetAllFiles(string bucketName, string folderName)
     {
-        if (folderName != null)
+        try
         {
-            var request = new ListObjectsV2Request()
+            if (folderName != null)
             {
-                BucketName = $"{_standartBucketName}",
-                Prefix = $"{folderName}",
-            };
-            var response = await _s3Client.ListObjectsV2Async(request);
-            return FileUtility.SortFiles(response, folderName);
+                var request = new ListObjectsV2Request()
+                {
+                    BucketName = $"{_standartBucketName}",
+                    Prefix = $"{folderName}",
+                };
+                var response = await _s3Client.ListObjectsV2Async(request);
+                return FileUtility.SortFiles(response, folderName);
+            }
+            else
+            {
+                var request = new ListObjectsV2Request()
+                {
+                    BucketName = $"{_standartBucketName}",
+                    Prefix = $"{bucketName}",
+                };
+
+                var response = await _s3Client.ListObjectsV2Async(request);
+                return FileUtility.SortFiles(response, bucketName);
+            }
         }
-        else
+        catch (AmazonS3Exception e)
         {
-            var request = new ListObjectsV2Request()
-            {
-                BucketName = $"{_standartBucketName}",
-                Prefix = $"{bucketName}",
-            };
-        
-            var response = await _s3Client.ListObjectsV2Async(request);
-            return FileUtility.SortFiles(response, bucketName);
+            Console.WriteLine(e.Message);
+            return null;
         }
     }
-    
+
     public async Task<bool> DeleteObject(string fileName)
     {
         try
@@ -104,18 +127,17 @@ public class FileStorageService : IFileStorageService
                 Key = fileName
             };
 
-            Console.WriteLine("Deleting an object");
             await _s3Client.DeleteObjectAsync(deleteObjectRequest);
 
             return true;
         }
         catch (AmazonS3Exception e)
         {
-            Console.WriteLine("Error encountered on server. Message:'{0}' when deleting an object", e.Message);
+            Console.WriteLine(e.Message);
             return false;
         }
     }
-    
+
     public async Task<bool> DownloadObject(string fileName)
     {
         try
@@ -130,53 +152,16 @@ public class FileStorageService : IFileStorageService
                 string dest = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), fileName);
                 await response.WriteResponseStreamToFileAsync(dest, true, CancellationToken.None);
             }
-            
+
             return true;
         }
         catch (AmazonS3Exception e)
         {
-            Console.WriteLine(e);
+            Console.WriteLine(e.Message);
             return false;
         }
     }
-    
-    public async Task<bool> RenameObject(string oldName, string newName)
-    {
-        try
-        {
-            var copyObjectRequest = new CopyObjectRequest
-            {
-                SourceBucket =_standartBucketName,
-                SourceKey = oldName,
-                DestinationBucket = _standartBucketName,
-                DestinationKey = newName
-            };
-            await _s3Client.CopyObjectAsync(copyObjectRequest);
-            await DeleteObject(oldName);
-            return true;
-        }
-        catch (AmazonS3Exception e)
-        {
-            Console.WriteLine(e);
-            return false;
-        }
-    }
-    
-    public async Task<bool> RenameBucket(string oldName, string newName)
-    {
-        try
-        {
-            await DeleteObject(oldName);
-            await CreateBucket(newName);
-            return true;
-        }
-        catch (AmazonS3Exception e)
-        {
-            Console.WriteLine(e);
-            return false;
-        }
-    }
-    
+
     public async Task CreateUsersBucket(int userId)
     {
         try
@@ -192,6 +177,58 @@ public class FileStorageService : IFileStorageService
         catch (AmazonS3Exception e)
         {
             Console.WriteLine(e.Message);
+        }
+    }
+    
+    public async Task<bool> RenameObject(string oldName, string newName, string path, string usersFolder)
+    {
+        try
+        {
+            CopyObjectRequest copyObjectRequest;
+            if (path != null)
+            {
+                copyObjectRequest = new CopyObjectRequest
+                {
+                    SourceBucket = _standartBucketName,
+                    SourceKey = $"{oldName}",
+                    DestinationBucket = _standartBucketName,
+                    DestinationKey = $"{path}/{newName}",
+                };
+            }
+            else
+            {
+                copyObjectRequest = new CopyObjectRequest
+                {
+                    SourceBucket = _standartBucketName,
+                    SourceKey = $"{oldName}",
+                    DestinationBucket = _standartBucketName,
+                    DestinationKey = $"{usersFolder}/{newName}",
+                };
+            }
+            
+            await _s3Client.CopyObjectAsync(copyObjectRequest);
+            await DeleteObject(oldName);
+            return true;
+        }
+        catch (AmazonS3Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return false;
+        }
+    }
+
+    public async Task<bool> RenameBucket(string oldName, string newName, string path, string usersFolder)
+    {
+        try
+        {
+            await DeleteObject(oldName);
+            await CreateBucket(newName, path, usersFolder);
+            return true;
+        }
+        catch (AmazonS3Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return false;
         }
     }
 }
