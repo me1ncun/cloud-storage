@@ -1,0 +1,30 @@
+﻿@model Amazon.S3.Model.S3Object
+
+@{
+    Layout = null;
+}
+
+<div class="d-flex justify-content-center align-content-center">
+    <img src="images/small-icons/file.png"/>
+    <h1 class="text-center"><b>@Model.Key</b></h1>
+    <br/>
+    <div>Uploaded at @Model.LastModified</div>
+    <div>Size: @Model.Size</div>
+    <div class="d-flex justify-content-center">
+        <form method="post" asp-action="RenameObject" asp-controller="File">
+            <button style="border: none; color: #5c636a;" class="renameButton" type="button" onclick="showRenameInput(this)">Rename</button>
+            <input type="hidden" name="oldName" value="@Model.Key"/>
+            <input class="new-name" style="display: none;" type="text" placeholder="Enter new name" name="newName">
+            @*<input type="hidden" name="path" value="@result"/>*@
+            <button class="okButton" style="display: none; border: none;" type="submit">Ok</button>
+        </form>
+        <form method="post" asp-action="DeleteObject" asp-controller="File">
+            <input type="hidden" name="fileName" value="@Model.Key"/>
+            <button style="border: none; color: red;" type="submit">Delete</button>
+        </form>
+        <form method="post" asp-action="DownloadObject" asp-controller="File">
+            <input type="hidden" name="fileName" value="@Model.Key"/>
+            <button style="border: none; color: blue;" type="submit">Download</button>
+        </form>
+    </div>
+</div>
