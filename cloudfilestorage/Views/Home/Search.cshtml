@@ -1,0 +1,62 @@
+﻿@model IndexViewModel
+
+@{
+    Layout = null;
+}
+
+@if(Model.FoundObjects != null)
+{
+    <div>Search result: </div>
+    <div style="border-radius: 8px; padding: 10px;" class="flex-box border box-shadow">
+        <div class="d-flex justify-content-between">
+            <div style="width: 30%;"><b>Object</b></div>
+            <div style="width: 30%;"><b>Upload date</b></div>
+            <div style="width: 30%;"><b>Size</b></div>
+            <div style="width: 10%;"><b>Open</b></div>
+        </div>
+    </div>
+
+    @foreach (var item in Model.FoundObjects)
+    {
+        @if (item.Key.LastIndexOf("/") == item.Key.Length-1)
+        {
+            {
+                var lastIndex = item.Key.LastIndexOf("/");
+                var underLastIndex = item.Key.LastIndexOf("/", lastIndex-1);
+                <div style="border-radius: 8px; padding: 10px;" class="flex-box border box-shadow">
+                    <div class="d-flex justify-content-between font-monospace align-items-center">
+                        <div style="width: 30%;"><img style="width: 30px; height: 30px; margin-right: 5px;" src="images/small-icons/folder.png"/>@item.Key.Remove(0, underLastIndex + 1).Replace("/", "")</div>
+                        <div style="width: 30%;">@item.LastModified</div>
+                        <div style="width: 30%;">@String.Empty</div>
+                        <div style="width: 10%;">
+                        <form method="post" asp-action="TransportFolderName" asp-controller="File">
+                            <input type="hidden" name="folderName" value="@item.Key"/>
+                            <button style="border: none;" type="submit">Open</button>
+                        </form>
+                    </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            {
+                var index = item.Key.LastIndexOf("/");
+                <div style="border-radius: 8px; padding: 10px;" class="flex-box border box-shadow">
+                    <div class="d-flex justify-content-between font-monospace align-items-center">
+                        <div style="width: 30%;"> <img style="width: 30px; height: 30px; margin-right: 5px;" src="images/small-icons/file.png"/>@item.Key.Remove(0, index + 1)</div>
+                        <div style="width: 30%;">@item.LastModified</div>
+                        <div style="width: 30%;">@item.Size</div>
+                        <div style="width: 10%;">
+                            <form method="post" asp-action="FilePage" asp-controller="File">
+                                <input type="hidden" name="fileName" value="@item.Key"/>
+                                <button style="border: none;" type="submit">Open</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+    }
+} 
