@@ -1,11 +1,19 @@
 ﻿@model IndexViewModel
 
 @{
-    Layout = null;
+    Layout = "_Layout";
 }
 
 @if(Model.FoundObjects != null)
-{
+{    <div class="d-flex justify-content-between flex-row align-self-center">
+        <a asp-controller="Home" class="text-black text-decoration-none" asp-action="Index">
+            <u>Home</u>
+        </a>
+        <form id="search-form" method="post" asp-action="Search" asp-controller="File">
+            <input type="text" placeholder="🔍︎ Search" name="searchedObj" style="width: 100px;">
+        </form>
+    </div>
+    
     <div>Search result: </div>
     <div style="border-radius: 8px; padding: 10px;" class="flex-box border box-shadow">
         <div class="d-flex justify-content-between">
@@ -25,7 +33,7 @@
                 var underLastIndex = item.Key.LastIndexOf("/", lastIndex-1);
                 <div style="border-radius: 8px; padding: 10px;" class="flex-box border box-shadow">
                     <div class="d-flex justify-content-between font-monospace align-items-center">
-                        <div style="width: 30%;"><img style="width: 30px; height: 30px; margin-right: 5px;" src="images/small-icons/folder.png"/>@item.Key.Remove(0, underLastIndex + 1).Replace("/", "")</div>
+                        <div style="width: 30%;"><img style="width: 30px; height: 30px; margin-right: 5px;" src="~/images/small-icons/folder.png"/>@item.Key.Remove(0, underLastIndex + 1).Replace("/", "")</div>
                         <div style="width: 30%;">@item.LastModified</div>
                         <div style="width: 30%;">@String.Empty</div>
                         <div style="width: 10%;">
@@ -44,7 +52,7 @@
                 var index = item.Key.LastIndexOf("/");
                 <div style="border-radius: 8px; padding: 10px;" class="flex-box border box-shadow">
                     <div class="d-flex justify-content-between font-monospace align-items-center">
-                        <div style="width: 30%;"> <img style="width: 30px; height: 30px; margin-right: 5px;" src="images/small-icons/file.png"/>@item.Key.Remove(0, index + 1)</div>
+                        <div style="width: 30%;"> <img style="width: 30px; height: 30px; margin-right: 5px;" src="~/images/small-icons/file.png"/>@item.Key.Remove(0, index + 1)</div>
                         <div style="width: 30%;">@item.LastModified</div>
                         <div style="width: 30%;">@item.Size</div>
                         <div style="width: 10%;">
@@ -57,6 +65,5 @@
                 </div>
             }
         }
-
     }
 } 
