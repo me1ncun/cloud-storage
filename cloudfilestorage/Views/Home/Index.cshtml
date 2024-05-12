@@ -13,13 +13,6 @@
             <input type="text" placeholder="🔍︎ Search" name="searchedObj" style="width: 100px;">
         </form>
     </div>
-
-    @if (Model.FoundObjects == null)
-    {
-        @await Html.PartialAsync("GetAllFiles")
-    }
-    else
-    {
-        @await Html.PartialAsync("Search")
-    }
+    
+    @await Html.PartialAsync("GetAllFiles")
 }
