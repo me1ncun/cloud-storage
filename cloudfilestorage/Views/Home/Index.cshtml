@@ -5,14 +5,6 @@
 }
 @if (!string.IsNullOrEmpty(loggedInUser))
 {
-    <div class="d-flex justify-content-between flex-row align-self-center">
-        <a asp-controller="Home" class="text-black text-decoration-none" asp-action="Index">
-            <u>Home</u>
-        </a>
-        <form id="search-form" method="post" asp-action="Search" asp-controller="File">
-            <input type="text" placeholder="🔍︎ Search" name="searchedObj" style="width: 100px;">
-        </form>
-    </div>
-    
+    @await Html.PartialAsync("Header")
     @await Html.PartialAsync("GetAllFiles")
 }

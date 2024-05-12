@@ -1,12 +1,9 @@
 ﻿@model Amazon.S3.Model.S3Object
-
 @{
     ViewData["Title"] = "File page";
     Layout = "_Layout";
 }
-<a asp-controller="Home" class="text-black text-decoration-none" asp-action="Index">
-    <u>Home</u>
-</a>
+@await Html.PartialAsync("Header")
 <div class="d-flex align-items-center justify-content-center flex-column" style="text-align: center; height: 600px;">
     <img class="file-icon" src="~/images/file.png"/>
     @{
