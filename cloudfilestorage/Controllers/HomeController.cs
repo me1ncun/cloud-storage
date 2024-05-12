@@ -9,34 +9,52 @@ namespace cloudfilestorage.Controllers;
 public class HomeController : Controller
 {
     private readonly IFileStorageService _fileStorageService;
-    
+
     public HomeController(IFileStorageService fileStorageService)
     {
         _fileStorageService = fileStorageService;
     }
-    
-    [HttpGet]
-    public async Task<IActionResult> Index(string folderName, string foundObjects)
-    {
-        var foundObjectsList = !string.IsNullOrEmpty(foundObjects) ? JsonSerializer.Deserialize<List<S3Object>>(foundObjects) : null;
 
+    [HttpGet]
+    public async Task<IActionResult> Index(string folderName)
+    {
+        var viewModel = await GetAllFiles(folderName);
+        return View(viewModel);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Search(string foundObjects)
+    {
+        var foundObjectsList = !string.IsNullOrEmpty(foundObjects)
+            ? JsonSerializer.Deserialize<List<S3Object>>(foundObjects)
+            : null;
+        var viewModel = new IndexViewModel
+        {
+            FoundObjects = foundObjectsList,
+        };
+
+        return View(viewModel);
+    }
+    
+    public async Task<IndexViewModel> GetAllFiles(string folderName)
+    {
         var foundFiles = await _fileStorageService.GetAllFiles(GetUsersStorage(), folderName);
         var path = HttpContext.Request.Query["folderName"];
 
         var viewModel = new IndexViewModel
         {
             AllFiles = foundFiles,
-            FoundObjects = foundObjectsList,
             Path = path,
         };
 
-        return View(viewModel);
+        return viewModel;
     }
 
     [HttpGet]
-    public IActionResult FilePage(S3Object fileName)
+    public IActionResult FilePage(string file)
     {
-        return View(fileName);
+        var desiredFile = JsonSerializer.Deserialize<S3Object>(file);
+        return View(desiredFile);
     }
     
     public string GetUsersStorage()
