@@ -19,7 +19,7 @@
 ### Home page
 ![photo_2.jpg](Screenshots/home_page.jpg)
 ### File page
-![photo_3.jpg](Screenshots/Picture3.jpg)
+![photo_3.jpg](Screenshots/file_page.jpg)
 ### Search page
 ![photo_3.jpg](Screenshots/search_page.jpg)
 
