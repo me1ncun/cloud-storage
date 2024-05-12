@@ -1,7 +1,7 @@
 ﻿@model IndexViewModel
 
 @{
-    Layout = null;
+    ViewData["Title"] = "All files";
     
     var result = "";
     if (Model.Path != null)
@@ -21,24 +21,28 @@
             {
                 <div class="dropdown">
                     <div class="item">
-                        @if (itemsInsideDirectory.Key.LastIndexOf("/") == itemsInsideDirectory.Key.Length-1)
+                        @if (itemsInsideDirectory.Key.LastIndexOf("/") == itemsInsideDirectory.Key.Length - 1)
                         {
-                            <img class="files-image" src="images/folders.png"/>
-                            <br/>
-                            {
-                                var lastIndex = itemsInsideDirectory.Key.LastIndexOf("/");
-                                var underLastIndex = itemsInsideDirectory.Key.LastIndexOf("/", lastIndex-1);
-                                <div class="justify-content-center d-flex">@itemsInsideDirectory.Key.Remove(0, underLastIndex+1).Replace("/", "")</div>
-                            }
+                            <section style="display: flex; align-items: center;" class="flex-column">
+                                <img class="files-image" src="images/folders.png" />
+                                @{
+                                    var lastIndex = itemsInsideDirectory.Key.LastIndexOf("/");
+                                    var underLastIndex = itemsInsideDirectory.Key.LastIndexOf("/", lastIndex - 1);
+                                    var folderName = itemsInsideDirectory.Key.Remove(0, underLastIndex + 1).Replace("/", "");
+                                }
+                                <div>@folderName</div>
+                            </section>
                         }
                         else
                         {
+                            <section style="display: flex; align-items: center;" class="flex-column">
                             <img class="files-image" src="images/file.png"/>
-                            <br/>
-                            {
+                                @{
                                 var index = itemsInsideDirectory.Key.LastIndexOf("/");
-                                <div class="justify-content-center d-flex">@itemsInsideDirectory.Key.Remove(0, index+1)</div>
-                            }
+                                var fileName = @itemsInsideDirectory.Key.Remove(0, index+1);
+                                }
+                                <div>@fileName</div>
+                            </section>
                         }
                     </div>
                     <div class="dropdown-content">
@@ -59,7 +63,9 @@
                         @if (!@itemsInsideDirectory.Key[@itemsInsideDirectory.Key.Length-1].Equals('/'))
                         {
                             <form method="post" asp-action="FilePage" asp-controller="File">
-                                <input type="hidden" name="fileName" value="@itemsInsideDirectory"/>
+                                <input type="hidden" name="fileName" value="@itemsInsideDirectory.Key"/>
+                                <input type="hidden" name="fileSize" value="@itemsInsideDirectory.Size"/>
+                                <input type="hidden" name="fileLastModified" value="@itemsInsideDirectory.LastModified"/>
                                 <button style="border: none;" type="submit">Open</button>
                             </form>
                             <form method="post" asp-action="RenameObject" asp-controller="File">
