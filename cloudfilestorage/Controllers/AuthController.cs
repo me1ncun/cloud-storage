@@ -26,7 +26,6 @@ public class AuthController : Controller
     {
         if (ModelState.IsValid)
         {
-            string? userLogin = _authService.Authenticate(model.Login, model.Password);
             var user = _authService.GetUser(model.Login, model.Password);
             if (user != null)
             {
