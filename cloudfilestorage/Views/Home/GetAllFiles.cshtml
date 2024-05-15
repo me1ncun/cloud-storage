@@ -1,14 +1,6 @@
 ﻿@model IndexViewModel
 @{
     ViewData["Title"] = "All files";
-    var result = "";
-    if (Model.Path != null)
-    {
-        var fullPath = Model.Path;
-        var lastIndex = fullPath.LastIndexOf("/");
-        var underLastIndex = fullPath.LastIndexOf("/", lastIndex);
-        result = fullPath.Substring(0, underLastIndex);
-    }
 }
 @if (Model != null && Model.AllFiles.S3Objects.Count > 0)
 {    
@@ -54,7 +46,7 @@
                                 <button style="border: none; color: red;" class="renameButton" type="button" onclick="showRenameInput(this)">Rename</button>
                                 <input type="hidden" name="oldName" value="@itemsInsideDirectory.Key"/>
                                 <input class="new-name" style="display: none;" type="text" placeholder="Enter new name" name="newName">
-                                <input type="hidden" name="path" value="@result"/>
+                                <input type="hidden" name="path" value="@Model.Path"/>
                                 <button class="okButton" style="display: none; border: none;" type="submit">Ok</button>
                             </form>
                         }
@@ -70,7 +62,7 @@
                                 <button style="border: none; color: red;" class="renameButton" type="button" onclick="showRenameInput(this)">Rename</button>
                                 <input type="hidden" name="oldName" value="@itemsInsideDirectory.Key"/>
                                 <input class="new-name" style="display: none;" type="text" placeholder="Enter new name" name="newName">
-                                <input type="hidden" name="path" value="@result"/>
+                                <input type="hidden" name="path" value="@Model.Path"/>
                                 <button class="okButton" style="display: none; border: none;" type="submit">Ok</button>
                             </form>
                         }

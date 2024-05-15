@@ -1,9 +1,4 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-
-var newFolderBtn = document.getElementById("newFolderBtn");
+﻿var newFolderBtn = document.getElementById("newFolderBtn");
 var input = document.getElementById("folderName");
 var create = document.getElementById("createFolder");
 
@@ -15,11 +10,10 @@ newFolderBtn.onclick = function() {
 
     input.style.display = "block";
     create.style.display = "block";
-    // Скрываем кнопку "New folder", чтобы предотвратить повторное нажатие
+ 
     newFolderBtn.style.display = "none";
 }
 
-// Добавляем обработчик для скрытия кнопки "New folder", если поле ввода пустое после потери фокуса
 input.addEventListener('blur', function() {
     if (this.value.trim() === "") {
         input.style.display = "none";
@@ -40,7 +34,7 @@ newFileBtn.onclick = function() {
 
     dropZone.style.display = "block";
     createFile.style.display = "block";
-    // Скрываем кнопку "New folder", чтобы предотвратить повторное нажатие
+    
     newFileBtn.style.display = "none";
 }
 

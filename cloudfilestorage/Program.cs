@@ -16,8 +16,6 @@ builder.Services.AddTransient<AppDbContext>();
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonS3>();
-builder.Services.Configure<AWSCredentials>(
-    builder.Configuration.GetSection(AWSCredentials.Position));
 
 // Add Redis cache
 builder.Services.AddStackExchangeRedisCache(options =>
