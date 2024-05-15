@@ -1,14 +1,4 @@
 ﻿@model IndexViewModel
-@{
-    var result = "";
-    if (Model.Path != null)
-    {
-        var fullPath = Model.Path;
-        var lastIndex = fullPath.LastIndexOf("/");
-        var underLastIndex = fullPath.LastIndexOf("/", lastIndex);
-        result = fullPath.Substring(0, underLastIndex);
-    }
-}
 <div id="file-manager" style="margin-top: 15px;">
     <div class="d-flex flex-row align-self-center bg-white border box-shadow" style="padding: 8px; border-radius: 8px;">
         <div class="flex-box border box-shadow" style="padding: 8px; border-radius: 8px;">
@@ -16,7 +6,7 @@
             <form asp-action="CreateBucket" asp-controller="File" method="post">
                 <button class="text-decoration-none bg-white" style="margin-top: 5px; border: 1.5px solid black; border-radius: 4px;" id="newFolderBtn" type="button">New folder</button>
                 <input style="display: none;" id="folderName" type="text" placeholder="Enter folder name" name="bucketName">
-                <input type="hidden" name="path" value="@result"/>
+                <input type="hidden" name="path" value="@Model.Path"/>
                 <button style="display: none; margin-top: 5px; " class="text-black text-decoration-none" id="createFolder" type="submit">Create</button>
             </form>
         </div>
@@ -28,7 +18,7 @@
                     <span class="drop-zone__prompt">Drop file here or click to upload</span>
                     <input type="file" name="file" class="drop-zone__input">
                 </div>
-                <input type="hidden" name="path" value="@result"/>
+                <input type="hidden" name="path" value="@Model.Path"/>
                 <button style="display: none; margin-top: 8px;" class="text-black text-decoration-none" id="createFile" type="submit">Upload</button>
             </form>
         </div>
