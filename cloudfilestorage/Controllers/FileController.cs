@@ -55,7 +55,9 @@ public class FileController : Controller
         {
             var allFiles = await _fileStorageService.GetAllFiles(GetUsersStorage(), null);
             var foundObjects = allFiles.S3Objects.Where(x => x.Key.Contains(searchedObj)).ToList();
+            
             var serializedObjects = JsonSerializer.Serialize(foundObjects);
+            
             return RedirectToAction("Search", "Home", new {foundObjects = serializedObjects });
         }
         else
@@ -139,7 +141,9 @@ public class FileController : Controller
             Size = fileSize,
             LastModified = fileLastModified
         };
+        
         var serializedFile = JsonSerializer.Serialize(file);
+        
         return RedirectToAction("FilePage", "Home", new { file = serializedFile });
     }
     
