@@ -4,7 +4,7 @@ namespace cloudfilestorage.Utils;
 
 public static class FileUtility
 {
-    public static ListObjectsV2Response SortFiles(ListObjectsV2Response files, string folderName)
+    public static ListObjectsV2Response GetFiles(ListObjectsV2Response files, string folderName)
     {
         var result = new ListObjectsV2Response();
         int prefixLength = folderName.Length;
