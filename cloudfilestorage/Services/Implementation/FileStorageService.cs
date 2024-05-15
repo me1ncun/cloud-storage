@@ -96,7 +96,7 @@ public class FileStorageService : IFileStorageService
                     Prefix = $"{folderName}",
                 };
                 var response = await _s3Client.ListObjectsV2Async(request);
-                return FileUtility.SortFiles(response, folderName);
+                return FileUtility.GetFiles(response, folderName);
             }
             else
             {
@@ -107,7 +107,7 @@ public class FileStorageService : IFileStorageService
                 };
 
                 var response = await _s3Client.ListObjectsV2Async(request);
-                return FileUtility.SortFiles(response, bucketName);
+                return FileUtility.GetFiles(response, bucketName);
             }
         }
         catch (AmazonS3Exception e)
