@@ -1,4 +1,5 @@
 ﻿using Amazon.Util.Internal;
+using cloudfilestorage.Helpers;
 using cloudfilestorage.Models;
 using cloudfilestorage.Repositories.Interface;
 using cloudfilestorage.Services.Interface;
@@ -17,8 +18,10 @@ public class AuthService : IAuthService
 
     public void Register(string login, string password)
     {
-        _authRepository.Register(login, password);
-        _fileStorageService.CreateUsersBucket(GetUser(login, password).ID);
+        var encryptedPassword = HashPasswordHelper.HashPassword(password);
+        
+        _authRepository.Register(login, encryptedPassword);
+        _fileStorageService.CreateUsersBucket(GetUser(login, encryptedPassword).ID);
         
     }
 
@@ -29,9 +32,11 @@ public class AuthService : IAuthService
 
     public string? Authenticate(string login, string password)
     {
-        foreach (User user in _authRepository.FindByLoginAndPass(login, password))
+        var encryptedPassword = HashPasswordHelper.HashPassword(password);
+        
+        foreach (User user in _authRepository.FindByLoginAndPass(login, encryptedPassword))
         {
-            if (user.Password == password)
+            if (user.Password == encryptedPassword)
             {
                 return user.Login;
                 
