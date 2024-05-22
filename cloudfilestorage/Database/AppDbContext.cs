@@ -1,18 +1,23 @@
 ﻿using System.Data;
+using cloudfilestorage.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace cloudfilestorage.Database;
 
-public class AppDbContext
+public class AppDbContext : DbContext
 {
-    private readonly IConfiguration _configuration;
-    private readonly string connectionstring;
+    private IConfiguration Configuration;
 
     public AppDbContext(IConfiguration configuration)
     {
-        this._configuration = configuration;
-        this.connectionstring = this._configuration.GetConnectionString("DefaultConnection");
+        Configuration = configuration;
     }
 
-    public IDbConnection CreateConnection() => new SqlConnection(connectionstring);
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseNpgsql(Configuration.GetConnectionString("Database"));
+    }
+    
+    public DbSet<User> Users { get; set; }
 }
