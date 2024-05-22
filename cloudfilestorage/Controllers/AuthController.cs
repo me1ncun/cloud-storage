@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using cloudfilestorage.Helpers;
 using cloudfilestorage.Models;
 using cloudfilestorage.Services.Implementation;
 using cloudfilestorage.Services.Interface;
@@ -20,13 +21,16 @@ public class AuthController : Controller
 
     [HttpGet]
     public IActionResult Register() => View();
+    
+    [HttpGet]
+    public IActionResult Success() => View();
 
     [HttpPost]
-    public IActionResult Login(UserViewModel model)
+    public async Task<IActionResult> Login(UserViewModel model)
     {
         if (ModelState.IsValid)
         {
-            var user = _authService.GetUser(model.Login, model.Password);
+            var user = await _authService.GetUser(model.Login, HashPasswordHelper.HashPassword(model.Password));
             if (user != null)
             {
                 HttpContext.Session.SetString("LoggedInUser", user.Login); 
@@ -44,12 +48,12 @@ public class AuthController : Controller
     }
 
     [HttpPost]
-    public IActionResult Register(UserViewModel model)
+    public async Task<IActionResult> Register(UserViewModel model)
     {
         if (ModelState.IsValid)
         {
             _authService.Register(model.Login, model.Password);
-            var user = _authService.GetUser(model.Login, model.Password);
+            var user = await _authService.GetUser(model.Login, model.Password);
             if (user != null)
             {
                 return View(user);
@@ -71,7 +75,7 @@ public class AuthController : Controller
         }
         catch (Exception ex)
         {
-            throw ex;
+            return RedirectToAction("Error");
         }
     }
 

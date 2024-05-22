@@ -5,15 +5,19 @@ using cloudfilestorage.Repositories;
 using cloudfilestorage.Repositories.Interface;
 using cloudfilestorage.Services.Implementation;
 using cloudfilestorage.Services.Interface;
+using Microsoft.EntityFrameworkCore;
+using tennis.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddSingleton<IAuthRepository, AuthRepository>();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Database")));
+builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IAuthRepository, AuthRepository>();
 builder.Services.AddTransient<AppDbContext>();
-builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+builder.Services.AddTransient<IFileStorageService, FileStorageService>();
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonS3>();
 
@@ -37,8 +41,8 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Shared/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+    app.ApplyMigrations();
 }
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

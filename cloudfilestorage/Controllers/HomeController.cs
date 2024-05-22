@@ -28,6 +28,7 @@ public class HomeController : Controller
         var foundObjectsList = !string.IsNullOrEmpty(foundObjects)
             ? JsonSerializer.Deserialize<List<S3Object>>(foundObjects)
             : null;
+        
         var viewModel = new IndexViewModel
         {
             FoundObjects = foundObjectsList,
