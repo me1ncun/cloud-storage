@@ -16,25 +16,26 @@ public class AuthService : IAuthService
         _fileStorageService = fileStorageService;
     }
 
-    public void Register(string login, string password)
+    public async Task Register(string login, string password)
     {
         var encryptedPassword = HashPasswordHelper.HashPassword(password);
         
         _authRepository.Register(login, encryptedPassword);
-        _fileStorageService.CreateUsersBucket(GetUser(login, encryptedPassword).ID);
+        var user = _authRepository.FindByLoginAndPass(login, encryptedPassword);
+        _fileStorageService.CreateUsersBucket(user.Result.ID);
         
     }
 
     public string Login(string login, string password)
     {
-        return _authRepository.Login(login, password);
+        return _authRepository.Login(login, password).Result;
     }
 
     public string? Authenticate(string login, string password)
     {
         var encryptedPassword = HashPasswordHelper.HashPassword(password);
-        
-        foreach (User user in _authRepository.FindByLoginAndPass(login, encryptedPassword))
+
+        var user = _authRepository.FindByLoginAndPass(login, encryptedPassword).Result;
         {
             if (user.Password == encryptedPassword)
             {
@@ -46,8 +47,8 @@ public class AuthService : IAuthService
         return null;
     }
 
-    public User GetUser(string login, string password)
+    public async Task<User> GetUser(string login, string password)
     {
-        return _authRepository.FindByLoginAndPass(login, password).FirstOrDefault();
+        return await _authRepository.FindByLoginAndPass(login, password);
     }
 }

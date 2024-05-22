@@ -2,44 +2,48 @@
 using cloudfilestorage.Models;
 using cloudfilestorage.Repositories.Interface;
 using Dapper;
+using Npgsql;
 
 namespace cloudfilestorage.Repositories;
 
 public class AuthRepository : IAuthRepository
 {
-    private readonly AppDbContext _context;
-
-    public AuthRepository(AppDbContext context)
+    private readonly IConfiguration _configuration;
+    private readonly string sqlString;
+    public AuthRepository(IConfiguration configuration)
     {
-        _context = context;
+        _configuration = configuration;
+        sqlString = _configuration.GetConnectionString("Database");
     }
 
-    public void Register(string login, string password)
+    public async void Register(string login, string password)
     {
-        using (var connection = _context.CreateConnection())
+        using (NpgsqlConnection connection = new NpgsqlConnection(sqlString))
         {
-            string query = "INSERT INTO [Users] (Login, Password) VALUES (@l, @p);";
+            string query = """INSERT INTO users(login, password) VALUES (@login, @password)""";
 
-            connection.Query(query, new { l = login, p = password });
+            await connection.QueryAsync(query, new { login, password });
         }
     }
 
-    public string Login(string login, string password)
+    public async Task<string> Login(string login, string password)
     {
-        using (var connection = _context.CreateConnection())
-        {
-            string query = "SELECT [Login] FROM [Users] WHERE Login = @n and Password = @p;";
+            using (NpgsqlConnection connection = new NpgsqlConnection(sqlString))
+            {
+                string query = """SELECT (login) FROM users WHERE (login) = @login AND (password) = @password""";
 
-            return connection.QueryFirstOrDefault<string>(query, new { l = login, p = password });
-        }
+                return await connection.QueryFirstAsync<string>(query, new { login, password });
+            }
+        
     }
 
-    public IEnumerable<User> FindByLoginAndPass(string login, string password)
+    public async Task<User> FindByLoginAndPass(string login, string password)
     {
-        using (var connection = _context.CreateConnection())
+        using (NpgsqlConnection connection = new NpgsqlConnection(sqlString))
         {
-            return connection.Query<User>("SELECT * FROM [Users] WHERE Login = @l AND Password = @p",
-                new { l = login, p = password });
+            string query = """SELECT * FROM users WHERE (login) = @login AND (password) = @password""";
+
+            return await connection.QueryFirstAsync<User>(query, new { login, password });
         }
     }
 }
