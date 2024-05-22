@@ -41,7 +41,7 @@
 
 - .NET 8.0
 - ASP.NET Core MVC
-- Microsoft SQL Server
+- PostgreSQL
 - Dapper
 - Docker
 - Redis
