@@ -12,6 +12,20 @@
 - Удаление
 - Переименование
 
+## Переменные окружения
+| Наименование   | Стандартное значение    | Описание                    |
+|----------------|-------------------------|-----------------------------|
+| POSTGRES_PORT  | `5432`                  | порт постгрес               |
+| POSTGRES_DB    | `cloudfilestorage`    | название базы данных постгрес |
+| POSTGRES_USER  | `postgres`              | наименование пользователя постгрес |
+| POSTGRES_PASSWORD | `postgres`              | пароль пользователя постгрес |
+| REDIS_PORT     | `6379`                  | порт редис                  |
+| AWS_PROFILE |                         | профиль AWS                 |
+| AWS_ACCESS_KEY_ID |                         | ключ подключения к AWS S3   |
+| AWS_SECRET_ACCESS_KEY |            | 	секретный ключ базы        |
+| AWS_REGION  | `us-east-1`                  | регион AWS                  |
+| SERVER_PORT    | `8080`                  | Порт приложения             |
+
 ## Интерфейс приложения
 
 ### Login page
@@ -29,5 +43,7 @@
 - ASP.NET Core MVC
 - Microsoft SQL Server
 - Dapper
+- Docker
 - Redis
 - AWS S3 (File storage)
+
