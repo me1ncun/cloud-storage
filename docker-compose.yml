@@ -17,7 +17,7 @@ services:
     networks:
       - deploy-guide
     depends_on:
-      - postgres-db
+      - db
       - redis
     environment:
       - AWS_PROFILE=${AWS_PROFILE}
@@ -26,7 +26,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
     command: ["dotnet", "ef", "database update"]
   
-  postgres-db:
+  db:
     image: postgres:latest
     container_name: postgres-db
     restart: always
@@ -39,7 +39,7 @@ services:
     networks:
       - deploy-guide
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
 
   redis:
     image: redis:latest
@@ -50,4 +50,4 @@ services:
       - deploy-guide
 
 volumes:
-    postgres-data:
+    db:
