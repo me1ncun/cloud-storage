@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "82S2DaqIXoMdCffI7Rz7dakqeoQ3UO95PTuofkbt8Z8QGAURJsF1r4HYiicE3xEac8ui2ckvP4FOxvXf7WDCcg==",
+  "dgSpecHash": "F4jRnBhiukH/y9WhyUhIqdN+v6+RHikmOzYq/sLcK631KLxxFknbh/dYffVa/zweD7h2TeUrd7Xud8myWJ5/PQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\denis\\OneDrive\\Рабочий стол\\cloudfilestorage\\cloudfilestorage\\cloudfilestorage\\cloudfilestorage.csproj",
+  "projectFilePath": "C:\\Users\\denis\\OneDrive\\Рабочий стол\\storage\\cloud-storage\\cloudfilestorage\\cloudfilestorage.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\denis\\.nuget\\packages\\awssdk.core\\3.7.303.21\\awssdk.core.3.7.303.21.nupkg.sha512",
     "C:\\Users\\denis\\.nuget\\packages\\awssdk.extensions.netcore.setup\\3.7.300\\awssdk.extensions.netcore.setup.3.7.300.nupkg.sha512",
