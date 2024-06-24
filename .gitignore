@@ -1,0 +1,14 @@
+**/.idea
+**/.vs
+**/obj
+**/postgres-data
+**/postgres-init
+.env
+.dockerignore
+**/.vs
+**/.idea/.idea.cloudfilestorage.dir/.idea
+**/bin
+**/obj
+**/obj
+cloudfilestorage.csproj.user
+libman.json
