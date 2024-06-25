@@ -56,7 +56,7 @@ public class AuthController : Controller
             var user = await _authService.GetUser(model.Login, model.Password);
             if (user != null)
             {
-                return View(user);
+                return RedirectToAction("Index", "Home");
             }
         }
 

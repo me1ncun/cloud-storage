@@ -2,6 +2,7 @@
 using cloudfilestorage.Models;
 using cloudfilestorage.Repositories.Interface;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
 namespace cloudfilestorage.Repositories;
@@ -10,9 +11,11 @@ public class AuthRepository : IAuthRepository
 {
     private readonly IConfiguration _configuration;
     private readonly string sqlString;
-    public AuthRepository(IConfiguration configuration)
+    private readonly AppDbContext _context;
+    public AuthRepository(IConfiguration configuration, AppDbContext context)
     {
         _configuration = configuration;
+        _context = context;
         sqlString = _configuration.GetConnectionString("Database");
     }
 
@@ -39,11 +42,16 @@ public class AuthRepository : IAuthRepository
 
     public async Task<User> FindByLoginAndPass(string login, string password)
     {
-        using (NpgsqlConnection connection = new NpgsqlConnection(sqlString))
+        /*using (NpgsqlConnection connection = new NpgsqlConnection(sqlString))
         {
             string query = """SELECT * FROM users WHERE (login) = @login AND (password) = @password""";
 
             return await connection.QueryFirstAsync<User>(query, new { login, password });
-        }
+        }*/
+
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Login == login && u.Password == password);
+
+        return user;
     }
 }
