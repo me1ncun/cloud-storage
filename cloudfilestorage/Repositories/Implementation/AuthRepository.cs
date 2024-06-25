@@ -42,13 +42,6 @@ public class AuthRepository : IAuthRepository
 
     public async Task<User> FindByLoginAndPass(string login, string password)
     {
-        /*using (NpgsqlConnection connection = new NpgsqlConnection(sqlString))
-        {
-            string query = """SELECT * FROM users WHERE (login) = @login AND (password) = @password""";
-
-            return await connection.QueryFirstAsync<User>(query, new { login, password });
-        }*/
-
         var user = await _context.Users
             .FirstOrDefaultAsync(u => u.Login == login && u.Password == password);
 
