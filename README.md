@@ -12,6 +12,16 @@ http://13.60.91.96:8080/
 - Удаление
 - Переименование
 
+## Инструменты
+
+- .NET 8.0
+- ASP.NET Core MVC
+- PostgreSQL
+- Dapper
+- Docker
+- Redis
+- AWS S3 (File storage)
+
 ## Переменные окружения
 | Наименование   | Стандартное значение    | Описание                    |
 |----------------|-------------------------|-----------------------------|
@@ -36,14 +46,4 @@ http://13.60.91.96:8080/
 ![photo_3.jpg](Screenshots/file_page.jpg)
 ### Search page
 ![photo_3.jpg](Screenshots/search_page.jpg)
-
-## Инструменты
-
-- .NET 8.0
-- ASP.NET Core MVC
-- PostgreSQL
-- Dapper
-- Docker
-- Redis
-- AWS S3 (File storage)
 
